@@ -976,3 +976,306 @@ html {
 .card-glow:hover::after {
     opacity: 1;
 }
+
+/* Reactions System */
+.reactions-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    margin: 1.5rem 0;
+}
+
+.reactions-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.reaction-btn {
+    background: var(--gray-100);
+    border: 2px solid transparent;
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.reaction-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+.reaction-btn:hover::before {
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+.reaction-btn:hover {
+    transform: scale(1.1);
+    background: var(--gray-200);
+}
+
+.reaction-btn.active {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transform: scale(1.05);
+}
+
+.reaction-btn.active .reaction-emoji {
+    animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+.reaction-emoji {
+    font-size: 1.5rem;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.reaction-btn:hover .reaction-emoji {
+    transform: scale(1.2);
+}
+
+.reaction-count {
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.95rem;
+}
+
+.reaction-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+    margin-top: 1rem;
+}
+
+.reaction-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    background: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.reaction-summary-emoji {
+    font-size: 1.2rem;
+}
+
+.reaction-summary-count {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+/* Share Buttons */
+.share-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.share-btn {
+    background: var(--gray-100);
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.share-btn:hover {
+    background: var(--gray-200);
+    transform: translateY(-2px);
+}
+
+.share-icon {
+    font-size: 1.2rem;
+}
+
+.share-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-xl);
+    padding: 0.5rem;
+    min-width: 200px;
+    z-index: 100;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.share-dropdown.active {
+    display: block;
+}
+
+.share-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--gray-700);
+    text-decoration: none;
+}
+
+.share-option:hover {
+    background: var(--gray-100);
+}
+
+.share-option-icon {
+    font-size: 1.5rem;
+    width: 30px;
+    text-align: center;
+}
+
+.share-option-text {
+    font-weight: 500;
+}
+
+/* Platform specific colors */
+.share-option.facebook:hover {
+    background: #1877f2;
+    color: white;
+}
+
+.share-option.twitter:hover {
+    background: #1da1f2;
+    color: white;
+}
+
+.share-option.linkedin:hover {
+    background: #0077b5;
+    color: white;
+}
+
+.share-option.whatsapp:hover {
+    background: #25d366;
+    color: white;
+}
+
+.share-option.copy:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Reaction Picker */
+.reaction-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 50px;
+    box-shadow: var(--shadow-xl);
+    padding: 0.5rem;
+    display: none;
+    gap: 0.3rem;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reaction-picker.active {
+    display: flex;
+}
+
+.reaction-picker-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reaction-picker-btn:hover {
+    background: var(--gray-100);
+    transform: scale(1.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .reactions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .reactions-container {
+        justify-content: center;
+    }
+    
+    .share-container {
+        justify-content: center;
+    }
+    
+    .reaction-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .reaction-emoji {
+        font-size: 1.3rem;
+    }
+}

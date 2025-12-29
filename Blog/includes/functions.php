@@ -211,4 +211,114 @@ function timeAgo($timestamp) {
         return date('M j, Y', $time);
     }
 }
+// Get reaction counts for a post
+function getPostReactions($post_id) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("SELECT reaction_type, COUNT(*) as count 
+                           FROM post_reactions 
+                           WHERE post_id = ? 
+                           GROUP BY reaction_type");
+    $stmt->bind_param("i", $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $reactions = [
+        'like' => 0,
+        'love' => 0,
+        'laugh' => 0,
+        'wow' => 0,
+        'sad' => 0,
+        'angry' => 0,
+        'total' => 0
+    ];
+    
+    while ($row = $result->fetch_assoc()) {
+        $reactions[$row['reaction_type']] = (int)$row['count'];
+        $reactions['total'] += (int)$row['count'];
+    }
+    
+    $stmt->close();
+    $conn->close();
+    return $reactions;
+}
+
+// Get user's reaction on a post
+function getUserReaction($post_id, $user_id) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("SELECT reaction_type FROM post_reactions WHERE post_id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $post_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $reaction = $result->num_rows > 0 ? $result->fetch_assoc()['reaction_type'] : null;
+    $stmt->close();
+    $conn->close();
+    return $reaction;
+}
+
+// Add or update reaction
+function addReaction($post_id, $user_id, $reaction_type) {
+    $allowed_reactions = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
+    
+    if (!in_array($reaction_type, $allowed_reactions)) {
+        return false;
+    }
+    
+    $conn = getDBConnection();
+    
+    // Check if user already reacted
+    $stmt = $conn->prepare("SELECT id FROM post_reactions WHERE post_id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $post_id, $user_id);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows > 0) {
+        // Update existing reaction
+        $stmt = $conn->prepare("UPDATE post_reactions SET reaction_type = ? WHERE post_id = ? AND user_id = ?");
+        $stmt->bind_param("sii", $reaction_type, $post_id, $user_id);
+    } else {
+        // Insert new reaction
+        $stmt = $conn->prepare("INSERT INTO post_reactions (post_id, user_id, reaction_type) VALUES (?, ?, ?)");
+        $stmt->bind_param("iis", $post_id, $user_id, $reaction_type);
+    }
+    
+    $result = $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    return $result;
+}
+
+// Remove reaction
+function removeReaction($post_id, $user_id) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("DELETE FROM post_reactions WHERE post_id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $post_id, $user_id);
+    $result = $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    return $result;
+}
+
+// Track share
+function trackShare($post_id, $user_id, $platform) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("INSERT INTO post_shares (post_id, user_id, share_platform) VALUES (?, ?, ?)");
+    $stmt->bind_param("iis", $post_id, $user_id, $platform);
+    $result = $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    return $result;
+}
+
+// Get share count for a post
+function getShareCount($post_id) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM post_shares WHERE post_id = ?");
+    $stmt->bind_param("i", $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $count = $result->fetch_assoc()['count'];
+    $stmt->close();
+    $conn->close();
+    return $count;
+}
 ?>

@@ -34,13 +34,16 @@ include 'includes/header.php';
                 </div>
             <?php else: ?>
                 <div class="posts-grid">
-                    <?php foreach ($posts as $post): ?>
+                    <?php foreach ($posts as $post): 
+                        $reactions = getPostReactions($post['id']);
+                        $shareCount = getShareCount($post['id']);
+                    ?>
                         <div class="post-card card-glow hover-lift">
                             <div class="post-image-wrapper">
                                 <?php if ($post['image']): ?>
                                     <img src="uploads/posts/<?php echo htmlspecialchars($post['image']); ?>" 
                                          alt="<?php echo htmlspecialchars($post['title']); ?>" class="post-image"
-                                         onerror="this.parentElement.style.display='none'">
+                                         onerror="this.parentElement.innerHTML='<div style=\'height: 220px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;\'>📝</div>'">
                                 <?php else: ?>
                                     <div style="height: 220px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
                                         📝
@@ -56,6 +59,18 @@ include 'includes/header.php';
                                 <p class="post-excerpt">
                                     <?php echo substr(strip_tags($post['content']), 0, 150) . '...'; ?>
                                 </p>
+                                
+                                <!-- Quick Stats -->
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; color: var(--gray-500); font-size: 0.9rem;">
+                                    <?php if ($reactions['total'] > 0): ?>
+                                        <span>❤️ <?php echo $reactions['total']; ?></span>
+                                    <?php endif; ?>
+                                    <span>💬 <?php echo count(getCommentsByPost($post['id'])); ?></span>
+                                    <?php if ($shareCount > 0): ?>
+                                        <span>🔗 <?php echo $shareCount; ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                
                                 <a href="post.php?id=<?php echo $post['id']; ?>" class="btn btn-small">Read More →</a>
                             </div>
                         </div>
